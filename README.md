@@ -32,3 +32,31 @@ const rootReducer = combineReducers({
 
 export default rootReducer;
 ```
+
+## Container
+
+A container is just a component that has direct access to the state that is produced by redux. We can call container as the *smart component* and the normal component as *domb component*.
+
+Which component do we want to promote to a container? It varies. In general we want the *most parent component* that cares about a particular piece of state to be a container.
+
+How to promote a domb component to a smart component? Two steps.
+
+1. Take our application state as an argument and whatever gets returned from here will show up as props inside of BookList
+
+```javascript
+function mapStateToProps(state) {
+  return {
+    books: state.books,
+  };
+}
+```
+
+2. Export the container
+
+```javascript
+import { connect } from 'react-redux';
+
+export default connect(mapStateToProps)(BookList);
+```
+
+If our state ever changes, our container will instantly re-render with the new list of books.
