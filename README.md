@@ -1,25 +1,34 @@
-# ReduxSimpleStarter
+# Redux
 
-Interested in learning [Redux](https://www.udemy.com/react-redux/)?
+## Reducer
 
-### Getting Started
+:star: A reducer is a function that returns a piece of the application state.
 
-There are two methods for getting started with this repo.
+To create a reducer, it's actually a two step process.
+1. Create the reducer, which is just a function
 
-#### Familiar with Git?
-Checkout this repo, install dependencies, then start the gulp process with the following:
-
+```javascript
+// inside reducer/reducer_books.js
+export default function () {
+  return [
+    { title: "The good part of JavaScript", page: 100 },
+    { title: "Performance in Action", page: 99 },
+    { title: "You Don't Know JS", page: 98 },
+    { title: "Introduction to Algorithms", page: 1500 },
+  ];
+}
 ```
-> git clone https://github.com/StephenGrider/ReduxSimpleStarter.git
-> cd ReduxSimpleStarter
-> npm install
-> npm start
-```
 
-#### Not Familiar with Git?
-Click [here](https://github.com/StephenGrider/ReactStarter/releases) then download the .zip file.  Extract the contents of the zip file, then open your terminal, change to the project directory, and:
+2. Wire into our application
 
-```
-> npm install
-> npm start
+```javascript
+// inside reducer/index.js
+import { combineReducers } from 'redux';
+import BooksReducer from './reducer_books';
+
+const rootReducer = combineReducers({
+  books: BooksReducer,
+});
+
+export default rootReducer;
 ```
