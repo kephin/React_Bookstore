@@ -60,3 +60,66 @@ export default connect(mapStateToProps)(BookList);
 ```
 
 If our state ever changes, our container will instantly re-render with the new list of books.
+
+## Action
+
+First go through the the overview of Life Cycle of an action and a redux application
+### Lift Cycle
+
+1. Event triggered by users
+2. All of the events can optionally call an action creator
+3. An action creator is just a function returns an object
+4. That object then automatically sent to all reducers
+5. Reducers can choose to return different piece of state depending on what the action is
+6. The new returned piece of state then pipe into the application state
+7. Notify containers of the changes to state. On notification, containers will re-render with new props
+
+Step 2~3:
+An action creator is just a function that returns an action
+An action is just an object that flows though all the reducers
+
+```javascript
+// selectBook is an ActionCreator, it needs to return an action, which is an object with a type property
+export default function selectBook(book) {
+  return {
+    type: 'BOOK_SELECTED',
+    payload: book,
+  };
+}
+```
+
+Step 4: we need to make sure that the action that gets returned from it ends up running through all of our reducers! Here is how:
+
+```javascript
+import { bindActionCreators } from 'redux';
+import selectBook from '../actions/index'; // import the action creator
+
+const mapStateToProps = state => ({
+  // Whatever is returned will show up as props inside of BookList
+  books: state.books,
+});
+
+function mapDispatchToProps(dispatch) {
+  // Whenever selectBook is called, the result should be passed to all of our reducers
+  return bindActionCreators({ selectBook }, dispatch);
+}
+
+// Promote BookList from a component to a container - it needs to know about this new dispatch method, selectBook. Make it available as a props
+export default connect(mapStateToProps, mapDispatchToProps)(BookList);
+```
+
+Step 5~7:
+
+All reducers get 2 arguments, current state and action. The reducers are only ever called when an action occurs. State argument is not application state, only the state this reducer is responsible for
+
+```javascript
+// reducers/reducer_active_book.js
+export default function(state = null, action) {
+  switch(action.type) {
+    case 'BOOK_SELECTED':
+      return action.payload;
+    default:
+      return state;
+  }
+}
+```
